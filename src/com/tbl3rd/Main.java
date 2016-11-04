@@ -3,10 +3,7 @@ package com.tbl3rd.streams;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -59,6 +56,8 @@ public class Main {
                     Map.Entry::getKey,
                          Collectors.mapping(Map.Entry::getValue,
                                             Collectors.toList())));
-        index.forEach((word, occurs) -> System.out.println(word + ": " + occurs));
+        index.entrySet().stream()
+            .sorted(Comparator.comparing(Map.Entry::getKey))
+            .forEach(e -> System.out.println(e.getKey() + ": " + e.getValue()));
     }
 }
