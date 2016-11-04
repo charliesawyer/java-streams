@@ -50,9 +50,9 @@ public class Main {
         final Map<String, Map<String, Long>> result =
             counts.entrySet().stream().collect(
                 Collectors.groupingBy(
-                        Map.Entry::getKey,
+                    Map.Entry::getKey,
                     Collectors.toMap(e -> fileName,
-                            Map.Entry::getValue)));
+                                     e -> e.getValue())));
         return result;
     }
 
@@ -77,8 +77,8 @@ public class Main {
 
     // Apply MAPWORDS to FILENAMES and collate on words.
     //
-    private static Map<String, List<Map<String, List<Integer>>>> collate(
-        Function<String, Map<String, Map<String, List<Integer>>>> mapWords,
+    private static <V> Map<String, List<Map<String, V>>> collate(
+        Function<String, Map<String, Map<String, V>>> mapWords,
         String[] fileNames) {
         return Arrays.stream(fileNames).map(mapWords)
             .map(Map::entrySet).flatMap(Collection::stream)
