@@ -37,10 +37,29 @@ public class Main {
             .collect(Collectors.toList());
     }
 
+    // Return {word {FILENAME count}} after counting each word in
+    // fileName.
+    //
+    private static Map<String, Map<String, Long>>
+    countWords(String fileName) {
+        final List<String> words = wordsFromFile(fileName);
+        final Map<String, Long> counts =
+            words.stream().collect(
+                Collectors.groupingBy(Function.identity(),
+                                      Collectors.counting()));
+        final Map<String, Map<String, Long>> result =
+            counts.entrySet().stream().collect(
+                Collectors.groupingBy(
+                        Map.Entry::getKey,
+                    Collectors.toMap(e -> fileName,
+                            Map.Entry::getValue)));
+        return result;
+    }
+
     // Return {word {FILENAME [index ...]}} for words in fileName.
     //
     private static Map<String, Map<String, List<Integer>>>
-        indexWordsInFile(String fileName) {
+        indexWords(String fileName) {
         final List<String> words = wordsFromFile(fileName);
         final Map<String, List<Integer>> indexes =
             IntStream.range(0, words.size()).boxed().collect(
@@ -56,7 +75,7 @@ public class Main {
         return result;
     }
 
-    // The result of applying MAPWORDS to FILENAMES collated on words.
+    // Apply MAPWORDS to FILENAMES and collate on words.
     //
     private static Map<String, List<Map<String, List<Integer>>>> collate(
         Function<String, Map<String, Map<String, List<Integer>>>> mapWords,
@@ -71,7 +90,7 @@ public class Main {
 
     public static void main(String[] argv) {
         final Map<String, List<Map<String, List<Integer>>>> index =
-            collate(Main::indexWordsInFile, argv);
+            collate(Main::indexWords, argv);
         index.entrySet().stream()
             .sorted(Comparator.comparing(Map.Entry::getKey))
             .forEach(e -> System.out.println(
