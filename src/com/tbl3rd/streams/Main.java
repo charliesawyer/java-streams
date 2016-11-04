@@ -3,6 +3,7 @@ package com.tbl3rd.streams;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -50,14 +51,16 @@ public class Main {
     public static void main(String[] argv) {
         Map<String, List<Map<String, List<Integer>>>> index =
             Arrays.stream(argv)
-            .map(fileName -> indexWordsInFile(fileName))
+            .map(Main::indexWordsInFile)
             .map(Map::entrySet).flatMap(Collection::stream)
             .collect(Collectors.groupingBy(
-                    Map.Entry::getKey,
+                         Map.Entry::getKey,
                          Collectors.mapping(Map.Entry::getValue,
                                             Collectors.toList())));
         index.entrySet().stream()
             .sorted(Comparator.comparing(Map.Entry::getKey))
-            .forEach(e -> System.out.println(e.getKey() + ": " + e.getValue()));
+            .forEach(e -> System.out.println(
+                         MessageFormat.format(
+                             "{0} : {1}", e.getKey(), e.getValue())));
     }
 }
