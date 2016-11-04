@@ -14,9 +14,11 @@ import static java.text.MessageFormat.format;
 
 public class Main {
 
+    // a regular expression to split strings into words
+    //
     private static final Pattern splitter = Pattern.compile("\\W+");
 
-    // Hide checked exceptions from lambda expressions.
+    // Return File.lines(PATH) with unchecked exceptions.
     //
     private static Stream<String> filesLinesUnchecked(Path path) {
         try {
@@ -26,15 +28,20 @@ public class Main {
         }
     }
 
-    // Return {word {fileName [index ...]}} for words in fileName.
+    // Return the words from FILENAME.
     //
-    private static Map<String, Map<String, List<Integer>>>
-        indexWordsInFile(String fileName) {
-        final Path path = Paths.get(fileName);
-        final List<String> words = filesLinesUnchecked(path)
+    private static List<String> wordsFromFile(String fileName) {
+        return filesLinesUnchecked(Paths.get(fileName))
             .flatMap(splitter::splitAsStream)
             .map(String::toLowerCase)
             .collect(Collectors.toList());
+    }
+
+    // Return {word {FILENAME [index ...]}} for words in fileName.
+    //
+    private static Map<String, Map<String, List<Integer>>>
+        indexWordsInFile(String fileName) {
+        final List<String> words = wordsFromFile(fileName);
         final Map<String, List<Integer>> indexes =
             IntStream.range(0, words.size()).boxed().collect(
                 Collectors.groupingBy(words::get));
@@ -49,6 +56,8 @@ public class Main {
         return result;
     }
 
+    // The result of applying MAPWORDS to FILENAMES collated on words.
+    //
     private static Map<String, List<Map<String, List<Integer>>>> collate(
         Function<String, Map<String, Map<String, List<Integer>>>> mapWords,
         String[] fileNames) {
