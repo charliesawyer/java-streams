@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static java.text.MessageFormat.*;
+
 public class Main {
 
     private static final Pattern splitter = Pattern.compile("\\W+");
@@ -44,7 +46,7 @@ public class Main {
                         v -> fileName,
                         Map.Entry::getValue)));
         result.forEach((name, index) -> System.out.println(
-                           name + ": " + index));
+                           format("{0}: {1}", name, index)));
         return result;
     }
 
@@ -60,7 +62,6 @@ public class Main {
         index.entrySet().stream()
             .sorted(Comparator.comparing(Map.Entry::getKey))
             .forEach(e -> System.out.println(
-                         MessageFormat.format(
-                             "{0} : {1}", e.getKey(), e.getValue())));
+                         format("{0} : {1}", e.getKey(), e.getValue())));
     }
 }
