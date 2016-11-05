@@ -88,12 +88,18 @@ public class Main {
                                             Collectors.toList())));
     }
 
-    public static void main(String[] argv) {
-        final Map<String, List<Map<String, List<Integer>>>> index =
-            collate(Main::indexWords, argv);
-        index.entrySet().stream()
+    // Show COLLATION on System.out.
+    //
+    private static <V> void show(Map<String, V> collation) {
+        collation.entrySet().stream()
             .sorted(Comparator.comparing(Map.Entry::getKey))
             .forEach(e -> System.out.println(
                          format("{0} : {1}", e.getKey(), e.getValue())));
+    }
+
+    public static void main(String[] argv) {
+        final Map<String, List<Map<String, List<Integer>>>> count =
+            collate(Main::countWords, argv);
+        show(collate(Main::indexWords, argv));
     }
 }
