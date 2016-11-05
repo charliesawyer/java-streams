@@ -47,13 +47,11 @@ public class Main {
             words.stream().collect(
                 Collectors.groupingBy(Function.identity(),
                                       Collectors.counting()));
-        final Map<String, Map<String, Long>> result =
-            counts.entrySet().stream().collect(
-                Collectors.groupingBy(
-                    Map.Entry::getKey,
-                    Collectors.toMap(e -> fileName,
-                                     e -> e.getValue())));
-        return result;
+        return counts.entrySet().stream().collect(
+            Collectors.groupingBy(
+                Map.Entry::getKey,
+                Collectors.toMap(e -> fileName,
+                                 Map.Entry::getValue)));
     }
 
     // Return {word {FILENAME [index ...]}} for words in fileName.
@@ -64,15 +62,11 @@ public class Main {
         final Map<String, List<Integer>> indexes =
             IntStream.range(0, words.size()).boxed().collect(
                 Collectors.groupingBy(words::get));
-        final Map<String, Map<String, List<Integer>>> result =
-            indexes.entrySet().stream().collect(
-                Collectors.groupingBy(
-                    Map.Entry::getKey,
-                    Collectors.toMap(v -> fileName,
-                                     Map.Entry::getValue)));
-        result.forEach((name, index) -> System.out.println(
-                           format("{0}: {1}", name, index)));
-        return result;
+        return indexes.entrySet().stream().collect(
+            Collectors.groupingBy(
+                Map.Entry::getKey,
+                Collectors.toMap(v -> fileName,
+                                 Map.Entry::getValue)));
     }
 
     // Apply MAPWORDS to FILENAMES and collate on words.
@@ -88,18 +82,22 @@ public class Main {
                                             Collectors.toList())));
     }
 
-    // Show COLLATION on System.out.
+    // Show the COLLATION on System.out.
     //
     private static <V> void show(Map<String, V> collation) {
         collation.entrySet().stream()
             .sorted(Comparator.comparing(Map.Entry::getKey))
             .forEach(e -> System.out.println(
-                         format("{0} : {1}", e.getKey(), e.getValue())));
+                         format("  {0} : {1}", e.getKey(), e.getValue())));
     }
 
     public static void main(String[] argv) {
-        final Map<String, List<Map<String, List<Integer>>>> count =
-            collate(Main::countWords, argv);
+        System.out.println();
+        System.out.println("Count words in files.");
+        show(collate(Main::countWords, argv));
+        System.out.println();
+        System.out.println("Index words in files.");
         show(collate(Main::indexWords, argv));
+        System.out.println();
     }
 }
